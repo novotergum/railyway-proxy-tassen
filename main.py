@@ -2,9 +2,12 @@ from fastapi import FastAPI, Request
 import httpx
 import os
 import uuid
+
 app = FastAPI()
+
 current_target = {"url": ""}
 results = {}  # job_id → result
+
 # -----------------------------------------------------------------------------
 # Register
 # -----------------------------------------------------------------------------
@@ -13,9 +16,11 @@ async def register(request: Request):
     body = await request.json()
     current_target["url"] = body.get("url", "")
     return {"status": "ok", "url": current_target["url"]}
+
 @app.get("/status")
 async def status():
     return {"target": current_target["url"]}
+
 # -----------------------------------------------------------------------------
 # Tasse
 # -----------------------------------------------------------------------------
@@ -42,6 +47,7 @@ async def tasse(request: Request):
             "job_id": job_id,
             "status_message": f"❌ Verbindungsfehler zum Mac Mini: {str(e)}"
         }
+
 # -----------------------------------------------------------------------------
 # Result Store
 # -----------------------------------------------------------------------------
@@ -52,6 +58,7 @@ async def store_result(request: Request):
     if job_id:
         results[job_id] = body
     return {"status": "ok"}
+
 @app.get("/result/{job_id}")
 async def get_result(job_id: str):
     return results.get(job_id, {
